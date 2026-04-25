@@ -27,7 +27,7 @@ pub fn run(config: Config) -> MyResult<()> {
                     } else if config.number_nonblank_lines {
                         if line.trim().is_empty() {
                             print!("{}", line);
-                       } else {
+                        } else {
                             print!("{:>6}\t{}", line_number, line);
                             line_number += 1;
                         }
@@ -66,14 +66,15 @@ pub fn get_args() -> MyResult<Config> {
                 .short('n')
                 .long("number")
                 .help("Number lines")
-                .action(ArgAction::SetFalse),
+                .action(ArgAction::SetTrue)
+                .conflicts_with("number-nonblank"),
         )
         .arg(
             Arg::new("number-nonblank")
                 .short('b')
                 .long("number-nonblank")
                 .help("Number non-blank lines")
-                .action(ArgAction::SetFalse),
+                .action(ArgAction::SetTrue),
         )
         .get_matches();
 

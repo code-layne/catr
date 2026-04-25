@@ -1,4 +1,2 @@
 #[test]
-fn runs() {
-
-}
+fn runs() {}
