@@ -1,5 +1,4 @@
 use assert_cmd::Command;
-use predicates::prelude::*;
 use rand::{RngExt, distr::Alphanumeric};
 use std::fs;
 
@@ -49,6 +48,15 @@ fn run(args: &[&str], expected_file: &str) -> TestResult {
     Ok(())
 }
 
+#[test]
+fn dies_bad_file() -> TestResult {
+    Command::cargo_bin(PRG)?
+        .args(&[gen_bad_file()])
+        .assert()
+        .failure()
+        .stderr("No such file or directory (os error 2)\n");
+    Ok(())
+}
 fn gen_bad_file() -> String {
     loop {
         let filename: String = rand::rng()
