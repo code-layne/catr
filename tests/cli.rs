@@ -1,4 +1,5 @@
 use assert_cmd::Command;
+use predicates::prelude::predicate;
 use rand::{RngExt, distr::Alphanumeric};
 use std::fs;
 
@@ -89,12 +90,12 @@ fn run(args: &[&str], expected_file: &str) -> TestResult {
 }
 
 #[test]
-fn dies_bad_file() -> TestResult {
+fn skips_bad_file() -> TestResult {
     Command::cargo_bin(PRG)?
         .args(&[gen_bad_file()])
         .assert()
-        .failure()
-        .stderr("No such file or directory (os error 2)\n");
+        .success()
+        .stderr(predicate::str::starts_with("Failed to open"));
     Ok(())
 }
 fn gen_bad_file() -> String {

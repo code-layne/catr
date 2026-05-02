@@ -15,30 +15,28 @@ type MyResult<T> = Result<T, Box<dyn Error>>;
 pub fn run(config: Config) -> MyResult<()> {
     for filename in config.files {
         match open(&filename) {
-            Err(err) => return Err(err),
-            Ok(mut reader) => {
-                let mut line = String::new();
-                let mut line_number = 1;
-                while reader.read_line(&mut line)? > 0 {
+            Err(err) => eprintln!("Failed to open {}: {}", filename, err),
+            Ok(reader) => {
+                let mut last_num = 0;
+                for (line_num, line) in reader.lines().enumerate() {
+                    let line = line?;
                     if config.number_lines {
-                        print!("{:>6}\t{}", line_number, line);
-
-                        line_number += 1;
+                        println!("{:>6}\t{}", line_num + 1, line);
                     } else if config.number_nonblank_lines {
-                        if line.trim().is_empty() {
-                            print!("{}", line);
+                        if !line.is_empty() {
+                            last_num += 1;
+                            println!("{:>6}\t{}", last_num, line);
                         } else {
-                            print!("{:>6}\t{}", line_number, line);
-                            line_number += 1;
+                            println!();
                         }
                     } else {
-                        print!("{}", line);
+                        println!("{}", line);
                     }
-                    line.clear();
                 }
             }
         }
     }
+
     Ok(())
 }
 
